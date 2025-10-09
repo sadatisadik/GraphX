@@ -17,10 +17,14 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
 import java.lang.Double;
-import java.lang.foreign.StructLayout;
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppController {
+    // Tolerance for the root finding
+    private static final double TOLERANCE = 1e-4;
+    // Max iterations for bisection
+    private static final int MAX_ITERATIONS = 50;
     final double range = 10;
     final double STEP_SIZE = 0.01;
     final int rows = 10;
@@ -271,14 +275,29 @@ public class AppController {
         equationGraph.getData().clear();
     }
 
-    //gets the equation from the textfield
+    //gets the equation from the text field
     private String getEquation() {
         return equationBox.getText();
     }
 
     //pareses the equation and gets the result of the equation
     private double parseEquation(double currentValue, String equation, String variable) {
-        Expression e = new ExpressionBuilder(equation).variables(variable).functions(acot, coth).build().setVariable(variable, currentValue);
+        Expression e = new ExpressionBuilder(equation)
+                .variables(variable)
+                .functions(acot, coth)
+                .build()
+                .setVariable(variable, currentValue);
+        return e.evaluate();
+    }
+
+    private double parseEquation(double val1, double val2, String equation, String var1, String var2) {
+        Expression e = new ExpressionBuilder(equation)
+                .variables(var1, var2)
+                .functions(acot, coth)
+                .build()
+                .setVariable(var1, val1)
+                .setVariable(var2,val2);
+
         return e.evaluate();
     }
 
@@ -308,66 +327,154 @@ public class AppController {
             String leftHandSide = equation.substring(0, equation.indexOf("=")).trim().toLowerCase();
             String rightHandSide = equation.substring(equation.indexOf("=")+1).trim().toLowerCase();
 
-            String expression;
+            String expression, implicitEquation, fullEquation;
 
-            //x is dependent and y independent
-            if(leftHandSide.equals("x") || rightHandSide.equals("x")) {
-                variable = "y";
-                expression = findExpression("x", leftHandSide, rightHandSide);
-                isFunctionOfY = true;
+            implicitEquation = "(" + leftHandSide + ") - (" + rightHandSide + ")";
+            fullEquation = leftHandSide + rightHandSide;
+            boolean hasX = fullEquation.contains("x");
+            boolean hasY = fullEquation.contains("y");
+
+            boolean leftHasSingleVar = leftHandSide.equals("x") || leftHandSide.equals("y");
+            boolean rightHasSingleVar = rightHandSide.equals("x") || rightHandSide.equals("y");
+            boolean isExplicit = leftHasSingleVar || rightHasSingleVar;
+            boolean hasBothVariable = hasX && hasY;
+            boolean isImplicit = !isExplicit && hasBothVariable;
+
+            // F(x,y) = 0 function
+            if(isImplicit) {
+                plotImplicitFunction(implicitEquation);
             }
-            // y is dependent and x is independent
-            else if(leftHandSide.equals("y") || rightHandSide.equals("y")) {
-                variable = "x";
-                expression = findExpression("y", leftHandSide, rightHandSide);
-            }
-            // failsafe
+            // y=f(x), x=f(y), f(x), z=f(t).....t=f(z) etc.
             else {
-                //assumes the variable is in right hand side
-                if(leftHandSide.length() < rightHandSide.length()) {
-                    variable = detectVariable(rightHandSide);
-                    expression = rightHandSide;
+                //x is dependent and y independent
+                if(leftHandSide.equals("x") || rightHandSide.equals("x")) {
+                    variable = "y";
+                    expression = findExpression("x", leftHandSide, rightHandSide);
+                    isFunctionOfY = true;
                 }
-                //variable not in right hand side
+                // y is dependent and x is independent
+                else if(leftHandSide.equals("y") || rightHandSide.equals("y")) {
+                    variable = "x";
+                    expression = findExpression("y", leftHandSide, rightHandSide);
+                }
+                // failsafe
                 else {
-                    variable = detectVariable(leftHandSide);
-                    expression = leftHandSide;
-                }
-            }
-
-            if(isFunctionOfY) {
-                //have to find break point
-                XYChart.Series<Double, Double> currentSeries = new XYChart.Series<>();
-                double prevX = Double.NaN;
-                double lastX = Double.NaN;
-                for(double y= -range, x; y<=range; y+= STEP_SIZE) {
-                    // get the current x
-                    x = parseEquation(y, expression, variable);
-                    // skip non-real numbers
-                    if(Double.isInfinite(x) || Double.isNaN(x)) continue;
-                    // if break point is found
-                    if(!Double.isNaN(prevX) && Math.signum(x - lastX) != Math.signum(lastX - prevX) && Math.signum(lastX - prevX) != 0) {
-                        equationGraph.getData().add(currentSeries);
-                        currentSeries = new XYChart.Series<>();
-                        // add the last point to the series
-                        currentSeries.getData().add(new XYChart.Data<>(lastX, y - STEP_SIZE));
+                    //assumes the variable is in right hand side
+                    if(leftHandSide.length() < rightHandSide.length()) {
+                        variable = detectVariable(rightHandSide);
+                        expression = rightHandSide;
                     }
-                    currentSeries.getData().add(new XYChart.Data<>(x, y));
-                    prevX = lastX;
-                    lastX = x;
+                    //variable not in right hand side
+                    else {
+                        variable = detectVariable(leftHandSide);
+                        expression = leftHandSide;
+                    }
                 }
-                equationGraph.getData().add(currentSeries); // add the final points
-            }
-            else {
-                for(double x = -range, y; x<=range; x+=STEP_SIZE) {
-                    y = parseEquation(x, expression, variable);
-                    series.getData().add(new XYChart.Data<>(x, y));
+
+                if(isFunctionOfY) {
+                    //have to find break point
+                    XYChart.Series<Double, Double> currentSeries = new XYChart.Series<>();
+                    double prevX = Double.NaN;
+                    double lastX = Double.NaN;
+                    for(double y= -range, x; y<=range; y+= STEP_SIZE) {
+                        // get the current x
+                        x = parseEquation(y, expression, variable);
+                        // skip non-real numbers
+                        if(Double.isInfinite(x) || Double.isNaN(x)) continue;
+                        // if break point is found
+                        if(!Double.isNaN(prevX) && Math.signum(x - lastX) != Math.signum(lastX - prevX) && Math.signum(lastX - prevX) != 0) {
+                            equationGraph.getData().add(currentSeries);
+                            currentSeries = new XYChart.Series<>();
+                            // add the last point to the series
+                            currentSeries.getData().add(new XYChart.Data<>(lastX, y - STEP_SIZE));
+                        }
+                        currentSeries.getData().add(new XYChart.Data<>(x, y));
+                        prevX = lastX;
+                        lastX = x;
+                    }
+                    equationGraph.getData().add(currentSeries); // add the final points
                 }
-                equationGraph.getData().add(series);
+                else {
+                    for(double x = -range, y; x<=range; x+=STEP_SIZE) {
+                        y = parseEquation(x, expression, variable);
+                        series.getData().add(new XYChart.Data<>(x, y));
+                    }
+                    equationGraph.getData().add(series);
+                }
             }
         }
     }
 
+    private void plotImplicitFunction(String implicitEquation) {
+        final double SEARCH_RANGE_MIN = -range;
+        final double SEARCH_RANGE_MAX = range;
+        final double Y_SAMPLE_STEP = 0.2; // Sample the y-range to find sign changes
+
+        for(double x = -range; x <= range; x += STEP_SIZE) {
+            // Find ALL roots for this x value by sampling the entire y-range
+            List<Double> roots = findAllRoots(x, SEARCH_RANGE_MIN, SEARCH_RANGE_MAX,
+                    implicitEquation, Y_SAMPLE_STEP);
+
+            // add all found roots as individual points
+            for(Double y_root : roots) {
+                // check if this point should be connected to previous series
+                boolean connected = false;
+
+                for(XYChart.Series<Double, Double> existingSeries : equationGraph.getData()) {
+                    if(existingSeries.getData().isEmpty()) continue;
+
+                    XYChart.Data<Double, Double> lastPoint =
+                            existingSeries.getData().get(existingSeries.getData().size() - 1);
+
+                    // if the last point is very close in x and y, add to that series
+                    if(Math.abs(lastPoint.getXValue() - x) < STEP_SIZE * 2 &&
+                            Math.abs(lastPoint.getYValue() - y_root) < 0.5) {
+                        existingSeries.getData().add(new XYChart.Data<>(x, y_root));
+                        connected = true;
+                        break;
+                    }
+                }
+
+                // if not connected to existing series, start a new one
+                if(!connected) {
+                    XYChart.Series<Double, Double> newSeries = new XYChart.Series<>();
+                    newSeries.getData().add(new XYChart.Data<>(x, y_root));
+                    equationGraph.getData().add(newSeries);
+                }
+            }
+        }
+    }
+
+    private List<Double> findAllRoots(double x_const, double y_min, double y_max,
+                                      String equation, double sampleStep) {
+        List<Double> roots = new ArrayList<>();
+
+        // sample the range to find all sign changes
+        for(double y = y_min; y < y_max; y += sampleStep) {
+            double f1 = parseEquation(x_const, y, equation, "x", "y");
+            double f2 = parseEquation(x_const, y + sampleStep, equation, "x", "y");
+
+            // skip if either value is invalid
+            if(Double.isNaN(f1) || Double.isInfinite(f1) ||
+                    Double.isNaN(f2) || Double.isInfinite(f2)) {
+                continue;
+            }
+
+            // in case of a sign change, use bisection to find the exact root
+            if(Math.signum(f1) != Math.signum(f2)) {
+                double root = bisectionSearch(x_const, y, y + sampleStep, equation);
+                if(!Double.isNaN(root)) {
+                    roots.add(root);
+                }
+            }
+            // check if value is very close to zero
+            else if(Math.abs(f1) < TOLERANCE) {
+                roots.add(y);
+            }
+        }
+
+        return roots;
+    }
 
     private String detectVariable(String equation) {
         String[] functions = {
@@ -384,5 +491,49 @@ public class AppController {
 
         if(equation.isEmpty()) return "x";
         else return String.valueOf(equation.charAt(0));
+    }
+
+    /**
+     * Bisection method to find a root (y value) for G(y) = F(x_const, y) = 0
+     * within the given y range.
+     * @param x_const The fixed x value.
+     * @param y_min Lower bound of y range.
+     * @param y_max Upper bound of y range.
+     * @param equation The implicit equation (RHS of F(x,y)=0).
+     * @return The y root, or Double.NaN if no root is found in the range.
+     */
+
+    private double bisectionSearch(double x_const, double y_min, double y_max, String equation) {
+        double f_min = parseEquation(x_const, y_min, equation, "x", "y");
+        double f_max = parseEquation(x_const, y_max, equation, "x", "y");
+
+        // if the interval doesn't straddle a root, or either end is already close to zero
+        if (Math.signum(f_min) == Math.signum(f_max)) {
+            if (Math.abs(f_min) < TOLERANCE) return y_min;
+            if (Math.abs(f_max) < TOLERANCE) return y_max;
+            return Double.NaN;
+        }
+
+        double a = y_min;
+        double b = y_max;
+        double c = 0;
+        double f_c;
+
+        for (int i = 0; i < MAX_ITERATIONS; i++) {
+            c = (a + b) / 2;
+            f_c = parseEquation(x_const, c, equation, "x", "y");
+
+            if (Math.abs(f_c) < TOLERANCE || (b - a) / 2 < TOLERANCE) {
+                return c; // Root found
+            }
+
+            if (Math.signum(f_c) == Math.signum(f_min)) {
+                a = c;
+                f_min = f_c;
+            } else {
+                b = c;
+            }
+        }
+        return c; // Best estimate after max iterations
     }
 }

@@ -26,7 +26,7 @@ public class GraphingCalculator extends Application {
 
         primaryStage.setScene(scene);
 
-        primaryStage.setTitle("Graphing Calculator by Sadik");
+        primaryStage.setTitle("GraphX");
 
         primaryStage.setResizable(false);
 
