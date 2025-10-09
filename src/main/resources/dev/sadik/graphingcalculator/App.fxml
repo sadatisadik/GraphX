@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="681.0" prefWidth="1280.0" style="-fx-background-color: #2c6566;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.sadik.graphingcalculator.AppController">
+   <children>
+      <Label layoutX="51.0" layoutY="14.0" text="Enter an equation:" textFill="WHITE">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <GridPane fx:id="buttonSet" alignment="CENTER" hgap="5.0" layoutX="48.0" layoutY="168.0" prefHeight="462.0" prefWidth="411.0" vgap="5.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <LineChart fx:id="equationGraph" createSymbols="false" layoutX="537.0" layoutY="55.0" legendVisible="false" prefHeight="599.0" prefWidth="686.0" titleSide="LEFT">
+          <xAxis>
+              <NumberAxis autoRanging="false" lowerBound="-10" side="BOTTOM" tickLabelFill="WHITE" tickUnit="1" upperBound="10" />
+          </xAxis>
+          <yAxis>
+              <NumberAxis autoRanging="false" lowerBound="-10" side="LEFT" tickLabelFill="WHITE" tickUnit="1" upperBound="10" />
+          </yAxis>
+      </LineChart>
+      <TextField fx:id="equationBox" layoutX="48.0" layoutY="52.0" prefHeight="38.0" prefWidth="411.0" promptText="i.e: sin^x+cos2x">
+         <font>
+            <Font size="17.0" />
+         </font></TextField>
+      <GridPane hgap="10.0" layoutX="48.0" layoutY="100.0" prefHeight="38.0" prefWidth="411.0" vgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#generate" prefHeight="11.0" prefWidth="115.0" text="Generate" />
+            <Button fx:id="clearText" mnemonicParsing="false" onAction="#clearText" prefHeight="26.0" prefWidth="112.0" text="Clear Text" GridPane.columnIndex="1" />
+            <Button fx:id="clearGraph" mnemonicParsing="false" onAction="#clearGraph" prefHeight="27.0" prefWidth="91.0" text="Clear Graph" GridPane.columnIndex="2" />
+            <Button fx:id="backspace" mnemonicParsing="false" prefHeight="29.0" prefWidth="96.0" text="Backspace" GridPane.columnIndex="3" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
