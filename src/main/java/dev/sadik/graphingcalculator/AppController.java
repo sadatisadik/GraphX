@@ -1,24 +1,35 @@
 package dev.sadik.graphingcalculator;
 
-//this class is used for controlling various elements of the anchorpane
+//this class is used for controlling various elements of the anchor-pane
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
+
+import java.io.IOException;
 import java.lang.Double;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AppController {
     // Tolerance for the root finding
@@ -51,6 +62,8 @@ public class AppController {
     @FXML
     Button backspace;
 
+    @FXML Button information;
+
     Function acot = new Function("acot", 1) {
         @Override
         public double apply(double... args) {
@@ -75,7 +88,7 @@ public class AppController {
                 {"y", "y"},                          // y
                 {"\\sqrt{x}", "sqrt("},              // square root
                 {"\\sqrt[3]{x}", "cbrt("},           // cubic root
-                {"e^{x}", "exp("},                   // e^x (Euler’s number power)
+                {"e^{x}", "exp("},                   // e^x (Euler's number power)
                 {"\\ln(x)", "log("},                 // natural logarithm (base e)
                 {"\\log_{10}(x)", "log10("},         // logarithm base 10
                 {"\\log_{2}(x)", "log2("},           // logarithm base 2
@@ -222,7 +235,7 @@ public class AppController {
                 buttonSet.add(b, c, r);
             }
 
-            // prevents the buttons from stealing focus from textfield
+            // prevents the buttons from stealing focus from text field
             for (Node node : buttonSet.getChildren()) {
                 if (node instanceof Button) {
                     node.setFocusTraversable(false);
@@ -232,6 +245,15 @@ public class AppController {
             clearGraph.setFocusTraversable(false);
             clearText.setFocusTraversable(false);
             generateButton.setFocusTraversable(false);
+            information.setFocusTraversable(false);
+
+            //sets the informating image inside the button
+            information.setPrefSize(25,25);
+            Image image = new Image(getClass().getResourceAsStream("/dev/sadik/graphingcalculator/information.png"));
+            ImageView img = new ImageView(image);
+            img.setFitHeight(25);
+            img.setPreserveRatio(true);
+            information.setGraphic(img);
 
             backspace.setOnAction(event -> {
                 String currentText = equationBox.getText();
@@ -254,9 +276,7 @@ public class AppController {
 
 
         // update the location of cursor
-        // update the location of cursor
         equationBox.positionCaret(caretPosition+text.length());
-
     }
 
     //initiates the generate button action
@@ -305,14 +325,42 @@ public class AppController {
         return exp1.equals(variable) ? exp2 : exp1;
     }
 
+
+     //checks if both sides of an equation contain the same variable(s)
+    private boolean hasSameVariableBothSides(String leftSide, String rightSide) {
+        boolean leftHasX = leftSide.contains("x");
+        boolean rightHasX = rightSide.contains("x");
+        boolean leftHasY = leftSide.contains("y");
+        boolean rightHasY = rightSide.contains("y");
+
+        // Check if x appears on both sides
+        boolean xOnBothSides = leftHasX && rightHasX && !leftHasY && !rightHasY;
+
+        // Check if y appears on both sides
+        boolean yOnBothSides = leftHasY && rightHasY && !leftHasX && !rightHasX;
+
+        return xOnBothSides || yOnBothSides;
+    }
+
+     //detects the primary variable in an equation containing same variable on both sides
+    private String detectPrimaryVariable(String leftSide, String rightSide) {
+        boolean leftHasX = leftSide.contains("x");
+        boolean rightHasX = rightSide.contains("x");
+
+        if (leftHasX || rightHasX) {
+            return "x";
+        }
+        return "y";
+    }
+
     //adds data in the series and then in graph
-     private void plotLine(String equation) {
+    private void plotLine(String equation) {
         XYChart.Series<Double,Double> series = new XYChart.Series<Double, Double>();
         String variable;
         XYChart.Data<Double, Double> data;
         boolean isFunctionOfY = false;
-         // only applicable for explicit functions
-         // equations written in f(x) form
+        // only applicable for explicit functions
+        // equations written in f(x) form
         if(!equation.contains("=")) {
             variable = detectVariable(equation);
             for(double x = -range, y; x <= range; x += STEP_SIZE) {
@@ -338,10 +386,19 @@ public class AppController {
             boolean rightHasSingleVar = rightHandSide.equals("x") || rightHandSide.equals("y");
             boolean isExplicit = leftHasSingleVar || rightHasSingleVar;
             boolean hasBothVariable = hasX && hasY;
-            boolean isImplicit = !isExplicit && hasBothVariable;
 
-            // F(x,y) = 0 function
-            if(isImplicit) {
+            // check if same variable appears on both sides
+            boolean sameVarBothSides = hasSameVariableBothSides(leftHandSide, rightHandSide);
+
+            boolean isImplicit = !isExplicit && hasBothVariable && !sameVarBothSides;
+
+            // handle equations with same variable on both sides like x^2 = x^3, sin(x) = cos(x) etc.
+            if (sameVarBothSides) {
+                variable = detectPrimaryVariable(leftHandSide, rightHandSide);
+                plotSameVariableEquation(implicitEquation, variable);
+            }
+            // for F(x,y) = 0 type function
+            else if(isImplicit) {
                 plotImplicitFunction(implicitEquation);
             }
             // y=f(x), x=f(y), f(x), z=f(t).....t=f(z) etc.
@@ -357,7 +414,7 @@ public class AppController {
                     variable = "x";
                     expression = findExpression("y", leftHandSide, rightHandSide);
                 }
-                // failsafe
+                // failsafe when no other case matches
                 else {
                     //assumes the variable is in right hand side
                     if(leftHandSide.length() < rightHandSide.length()) {
@@ -372,7 +429,6 @@ public class AppController {
                 }
 
                 if(isFunctionOfY) {
-                    //have to find break point
                     XYChart.Series<Double, Double> currentSeries = new XYChart.Series<>();
                     double prevX = Double.NaN;
                     double lastX = Double.NaN;
@@ -403,6 +459,90 @@ public class AppController {
                 }
             }
         }
+    }
+
+    //plots equations where the same variable appears on both sides
+    private void plotSameVariableEquation(String implicitEquation, String variable) {
+        final double SEARCH_STEP = 0.1;
+        List<Double> roots = new ArrayList<>();
+
+        // Find all roots where the equation equals zero
+        for (double v = -range; v < range; v += SEARCH_STEP) {
+            double f1 = parseEquation(v, implicitEquation, variable);
+            double f2 = parseEquation(v + SEARCH_STEP, implicitEquation, variable);
+
+            // Skip invalid values
+            if (Double.isNaN(f1) || Double.isInfinite(f1) ||
+                    Double.isNaN(f2) || Double.isInfinite(f2)) {
+                continue;
+            }
+
+            // Check for sign change (root exists)
+            if (Math.signum(f1) != Math.signum(f2)) {
+                double root = bisectionSearchSingleVar(v, v + SEARCH_STEP, implicitEquation, variable);
+                if (!Double.isNaN(root)) {
+                    roots.add(root);
+                }
+            }
+            // Check if already very close to zero
+            else if (Math.abs(f1) < TOLERANCE) {
+                roots.add(v);
+            }
+        }
+
+        // Plot the roots as points with vertical lines
+        if (variable.equals("x")) {
+            // For x variable, plot vertical lines at each root
+            for (Double root : roots) {
+                XYChart.Series<Double, Double> lineSeries = new XYChart.Series<>();
+                lineSeries.getData().add(new XYChart.Data<>(root, -range));
+                lineSeries.getData().add(new XYChart.Data<>(root, range));
+                equationGraph.getData().add(lineSeries);
+            }
+        } else {
+            // For y variable, plot horizontal lines at each root
+            for (Double root : roots) {
+                XYChart.Series<Double, Double> lineSeries = new XYChart.Series<>();
+                lineSeries.getData().add(new XYChart.Data<>(-range, root));
+                lineSeries.getData().add(new XYChart.Data<>(range, root));
+                equationGraph.getData().add(lineSeries);
+            }
+        }
+    }
+
+   // bisection search for single-variable equations
+    private double bisectionSearchSingleVar(double min, double max, String equation, String variable) {
+        double f_min = parseEquation(min, equation, variable);
+        double f_max = parseEquation(max, equation, variable);
+
+        // Check if interval straddles a root
+        if (Math.signum(f_min) == Math.signum(f_max)) {
+            if (Math.abs(f_min) < TOLERANCE) return min;
+            if (Math.abs(f_max) < TOLERANCE) return max;
+            return Double.NaN;
+        }
+
+        double a = min;
+        double b = max;
+        double c = 0;
+        double f_c;
+
+        for (int i = 0; i < MAX_ITERATIONS; i++) {
+            c = (a + b) / 2;
+            f_c = parseEquation(c, equation, variable);
+
+            if (Math.abs(f_c) < TOLERANCE || (b - a) / 2 < TOLERANCE) {
+                return c;
+            }
+
+            if (Math.signum(f_c) == Math.signum(f_min)) {
+                a = c;
+                f_min = f_c;
+            } else {
+                b = c;
+            }
+        }
+        return c;
     }
 
     private void plotImplicitFunction(String implicitEquation) {
@@ -535,5 +675,18 @@ public class AppController {
             }
         }
         return c; // Best estimate after max iterations
+    }
+
+    //function for author information
+    public void showInformation(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/graphingcalculator/Information.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        Stage infoScreen = new Stage();
+        infoScreen.setTitle("About Developer");
+        Image icon = new Image(getClass().getResourceAsStream("/dev/sadik/graphingcalculator/information.png"));
+        infoScreen.getIcons().add(icon);
+        infoScreen.setScene(scene);
+        infoScreen.show();
     }
 }
