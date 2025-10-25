@@ -13,7 +13,7 @@
 
 <AnchorPane prefHeight="681.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, #3b8d99 0%, #6b6b83 50%, #aa4b6b 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.sadik.graphingcalculator.AppController">
    <children>
-      <Label layoutX="51.0" layoutY="14.0" text="Enter an equation:" textFill="WHITE">
+      <Label layoutX="51.0" layoutY="14.0" text="Enter an equation: " textFill="WHITE">
          <font>
             <Font size="19.0" />
          </font>
@@ -46,7 +46,7 @@
               <NumberAxis autoRanging="false" lowerBound="-10" side="LEFT" tickLabelFill="WHITE" tickUnit="1" upperBound="10" />
           </yAxis>
       </LineChart>
-      <TextField fx:id="equationBox" layoutX="48.0" layoutY="52.0" prefHeight="38.0" prefWidth="411.0" promptText="i.e: sin^x+cos2x">
+      <TextField fx:id="equationBox" layoutX="48.0" layoutY="52.0" prefHeight="38.0" prefWidth="411.0" promptText="i.e: (sin(x))^2+cos2(x)">
          <font>
             <Font size="17.0" />
          </font></TextField>

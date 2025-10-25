@@ -5,7 +5,6 @@ package dev.sadik.graphingcalculator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,7 +16,6 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -29,7 +27,6 @@ import java.io.IOException;
 import java.lang.Double;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class AppController {
     // Tolerance for the root finding
