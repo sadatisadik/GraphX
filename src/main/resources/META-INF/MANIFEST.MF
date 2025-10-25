@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: dev.sadik.graphingcalculator.App
+Main-Class: dev.sadik.GraphX.App
 

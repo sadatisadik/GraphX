@@ -1,4 +1,4 @@
-package dev.sadik.graphingcalculator;
+package dev.sadik.GraphX;
 
 //this class is used for controlling various elements of the anchor-pane
 
@@ -246,7 +246,7 @@ public class AppController {
 
             //sets the informating image inside the button
             information.setPrefSize(25,25);
-            Image image = new Image(getClass().getResourceAsStream("/dev/sadik/graphingcalculator/information.png"));
+            Image image = new Image(getClass().getResourceAsStream("/dev/sadik/GraphX/information.png"));
             ImageView img = new ImageView(image);
             img.setFitHeight(25);
             img.setPreserveRatio(true);
@@ -676,12 +676,12 @@ public class AppController {
 
     //function for author information
     public void showInformation(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/graphingcalculator/Information.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/GraphX/Information.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         Stage infoScreen = new Stage();
         infoScreen.setTitle("About Developer");
-        Image icon = new Image(getClass().getResourceAsStream("/dev/sadik/graphingcalculator/information.png"));
+        Image icon = new Image(getClass().getResourceAsStream("/dev/sadik/GraphX/information.png"));
         infoScreen.getIcons().add(icon);
         infoScreen.setScene(scene);
         infoScreen.show();

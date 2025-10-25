@@ -1,4 +1,4 @@
-package dev.sadik.graphingcalculator;
+package dev.sadik.GraphX;
 
 //launcher of the main app
 

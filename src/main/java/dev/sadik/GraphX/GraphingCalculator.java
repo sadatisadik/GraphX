@@ -1,4 +1,4 @@
-package dev.sadik.graphingcalculator;
+package dev.sadik.GraphX;
 
 //start of the main app
 
@@ -16,11 +16,11 @@ public class GraphingCalculator extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/graphingcalculator/App.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/GraphX/App.fxml"));
 
         Parent root = loader.load();
 
-        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dev/sadik/graphingcalculator/icon.png")));
+        Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dev/sadik/GraphX/icon.png")));
 
         Scene scene = new Scene(root);
 

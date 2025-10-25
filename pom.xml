@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
   <groupId>dev.sadik</groupId>
   <artifactId>GraphX</artifactId>
@@ -14,6 +14,11 @@
 <junit.version>5.12.1</junit.version>  </properties>
 
   <dependencies>
+      <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx-swing</artifactId>
+          <version>25</version> <!-- or the version you are using -->
+      </dependency>
       <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
       <dependency>
           <groupId>org.openjfx</groupId>
@@ -38,11 +43,6 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.openjfx</groupId>
-          <artifactId>javafx-controls</artifactId>
-          <version>12.0.2</version>
-      </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -90,7 +90,7 @@
             <!-- Default configuration for running with: mvn clean javafx:run -->
             <id>default-cli</id>
             <configuration>
-              <mainClass>dev.sadik.graphingcalculator/dev.sadik.graphingcalculator.HelloApplication</mainClass>
+              <mainClass>dev.sadik.graphingcalculator/dev.sadik.GraphX.HelloApplication</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>

@@ -1,12 +1,12 @@
-module dev.sadik.graphingcalculator {
+module dev.sadik.GraphX {
     requires javafx.controls;
     requires javafx.fxml;
     requires exp4j;
     requires java.desktop;
-    requires javafx.swing;
     requires jlatexmath;
+    requires javafx.swing;
 
 
-    opens dev.sadik.graphingcalculator to javafx.fxml;
-    exports dev.sadik.graphingcalculator;
+    opens dev.sadik.GraphX to javafx.fxml;
+    exports dev.sadik.GraphX;
 }

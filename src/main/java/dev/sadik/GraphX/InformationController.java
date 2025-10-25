@@ -1,4 +1,4 @@
-package dev.sadik.graphingcalculator;
+package dev.sadik.GraphX;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

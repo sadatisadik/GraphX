@@ -1,7 +1,6 @@
-package dev.sadik.graphingcalculator;
+package dev.sadik.GraphX;
 
 import  javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import javafx.scene.image.ImageView;
