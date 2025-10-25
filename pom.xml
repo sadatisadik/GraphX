@@ -5,15 +5,22 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>dev.sadik</groupId>
-  <artifactId>graphingcalculator</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>graphingcalculator</name>
+  <artifactId>GraphX</artifactId>
+  <version>1.0</version>
+  <name>GraphX</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <junit.version>5.12.1</junit.version>  </properties>
 
   <dependencies>
+      <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
+      <dependency>
+          <groupId>org.openjfx</groupId>
+          <artifactId>javafx</artifactId>
+          <version>25</version>
+          <type>pom</type>
+      </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
