@@ -18,7 +18,7 @@
             <Font size="19.0" />
          </font>
       </Label>
-      <GridPane fx:id="buttonSet" alignment="CENTER" hgap="5.0" layoutX="48.0" layoutY="168.0" prefHeight="462.0" prefWidth="411.0" vgap="5.0">
+      <GridPane fx:id="buttonSet" alignment="CENTER" hgap="5.0" layoutX="48.0" layoutY="168.0" prefHeight="462.0" prefWidth="442.0" vgap="5.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -46,14 +46,15 @@
               <NumberAxis autoRanging="false" lowerBound="-10" side="LEFT" tickLabelFill="WHITE" tickUnit="1" upperBound="10" />
           </yAxis>
       </LineChart>
-      <TextField fx:id="equationBox" layoutX="48.0" layoutY="52.0" prefHeight="38.0" prefWidth="411.0" promptText="i.e: (sin(x))^2+cos2(x)">
+      <TextField fx:id="equationBox" layoutX="51.0" layoutY="49.0" prefHeight="38.0" prefWidth="442.0" promptText="i.e: (sin(x))^2+cos2(x)">
          <font>
             <Font size="17.0" />
          </font></TextField>
-      <GridPane hgap="10.0" layoutX="48.0" layoutY="100.0" prefHeight="38.0" prefWidth="411.0" vgap="10.0">
+      <GridPane hgap="10.0" layoutX="51.0" layoutY="97.0" prefHeight="38.0" prefWidth="442.0" vgap="10.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -61,10 +62,11 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#generate" prefHeight="11.0" prefWidth="115.0" text="Generate" />
-            <Button fx:id="clearText" mnemonicParsing="false" onAction="#clearText" prefHeight="26.0" prefWidth="112.0" text="Clear Text" GridPane.columnIndex="1" />
-            <Button fx:id="clearGraph" mnemonicParsing="false" onAction="#clearGraph" prefHeight="27.0" prefWidth="91.0" text="Clear Graph" GridPane.columnIndex="2" />
-            <Button fx:id="backspace" mnemonicParsing="false" prefHeight="29.0" prefWidth="96.0" text="Backspace" GridPane.columnIndex="3" />
+            <Button fx:id="generateButton" mnemonicParsing="false" onAction="#generate" prefHeight="14.0" prefWidth="80.0" text="Generate" />
+            <Button fx:id="clearText" mnemonicParsing="false" onAction="#clearText" prefHeight="0.0" prefWidth="80.0" text="Clear Text" GridPane.columnIndex="1" />
+            <Button fx:id="clearGraph" mnemonicParsing="false" onAction="#clearGraph" prefHeight="0.0" prefWidth="80.0" text="Clear Graph" GridPane.columnIndex="2" />
+            <Button fx:id="backspace" mnemonicParsing="false" prefHeight="0.0" prefWidth="81.0" text="Backspace" GridPane.columnIndex="3" />
+            <Button fx:id="showTable" mnemonicParsing="false" onAction="#showTable" prefHeight="6.0" prefWidth="81.0" text="Show Table" GridPane.columnIndex="4" />
          </children>
       </GridPane>
       <Label layoutX="1151.0" layoutY="664.0" text="©Sadati Sadik Pranto , 2025" textFill="WHITE">
@@ -72,6 +74,6 @@
             <Font name="Calibri" size="11.0" />
          </font>
       </Label>
-      <Button fx:id="information" layoutX="1234.0" layoutY="5.0" mnemonicParsing="false" onAction="#showInformation" prefHeight="5.0" prefWidth="20.0" style="-fx-background-color: tranparent;" />
+      <Button fx:id="information" layoutX="1234.0" layoutY="5.0" mnemonicParsing="false" onAction="#showInformation" prefHeight="5.0" prefWidth="20.0" style="-fx-background-color: transparent;" />
    </children>
 </AnchorPane>

@@ -2,6 +2,8 @@ package dev.sadik.GraphX;
 
 //this class is used for controlling various elements of the anchor-pane
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,65 +12,89 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
-
 import java.io.IOException;
 import java.lang.Double;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javafx.concurrent.Task;
 
-public class AppController {
-    // Tolerance for the root finding
+interface functionConstant{
+String[][] functions = {
+        {"1","1"}, {"2", "2"}, {"+", "+"}, {"-", "-"},
+        {"3", "3"}, {"4", "4"}, {"\\times", "*"}, {"\\div", "/"},
+        {"5","5"}, {"6", "6"}, {"(", "("}, {")", ")"},
+        {"7", "7"}, {"8", "8"},  {"=", "="}, {"x", "x"},
+        {"9", "9"}, {"0", "0"},{"|x|", "abs("}, {"\\Box^{a}","^"},
+        {"y", "y"},                          // y
+        {"\\sqrt{x}", "sqrt("},              // square root
+        {"\\sqrt[3]{x}", "cbrt("},           // cubic root
+        {"e^{x}", "exp("},                   // e^x (Euler's number power)
+        {"\\ln(x)", "log("},                 // natural logarithm (base e)
+        {"\\log_{10}(x)", "log10("},         // logarithm base 10
+        {"\\log_{2}(x)", "log2("},           // logarithm base 2
+        {"\\sin(x)", "sin("},                // sine
+        {"\\cos(x)", "cos("},                // cosine
+        {"\\tan(x)", "tan("},                // tangent
+        {"\\cot(x)", "cot("},                // cotangent
+        {"\\sin^{-1}(x)", "asin("},          // inverse sine
+        {"\\cos^{-1}(x)", "acos("},          // inverse cosine
+        {"\\tan^{-1}(x)", "atan("},          // inverse tangent
+        {"\\cot^{-1}(x)", "acot("},          // inverse cotangent
+        {"\\sinh(x)", "sinh("},              // hyperbolic sine
+        {"\\cosh(x)", "cosh("},              // hyperbolic cosine
+        {"\\tanh(x)", "tanh("},              // hyperbolic tangent
+        {"\\coth(x)", "coth("},              // hyperbolic cotangent
+        {"\\mathrm{sign}(x)", "signum("}     // signum function
+};
+}
+
+public class AppController implements functionConstant {
+    // Tolerance for the root finding method
     private static final double TOLERANCE = 1e-4;
-    // Max iterations for bisection
+    // Max iterations for bisection search
     private static final int MAX_ITERATIONS = 50;
-    final double range = 10;
-    final double STEP_SIZE = 0.01;
-    final int rows = 10;
-    final int cols = 4;
+    //Range and required steps for graph
+    private final double range = 10;
+    private final double STEP_SIZE = 0.01;
+    //rows and cols for calculator buttons
+    //array to store inserted equations
+    private final ArrayList<String> equations = new ArrayList<>();
 
-    @FXML
-    LineChart <Double,Double> equationGraph;
-
-    @FXML
-    TextField equationBox;
-
-    @FXML
-    Button generateButton;
-
-    @FXML
-    Button clearText;
-
-    @FXML
-    Button clearGraph;
-
-    @FXML
-    GridPane buttonSet;
-
-    @FXML
-    Button backspace;
-
+    //Injecting the elements to be controlled from FXML to AppController class
+    @FXML LineChart <Double,Double> equationGraph;
+    @FXML TextField equationBox;
+    @FXML Button generateButton;
+    @FXML Button clearText;
+    @FXML Button clearGraph;
+    @FXML GridPane buttonSet;
+    @FXML Button backspace;
     @FXML Button information;
+    @FXML Button showTable;
 
-    Function acot = new Function("acot", 1) {
+    //inverse cot function implementation
+    private Function acot = new Function("acot", 1) {
         @Override
         public double apply(double... args) {
             return Math.atan(1/args[0]);
         }
     };
 
-    Function coth = new Function("coth", 1) {
+    // inverse hyperbolic coth function generation
+    private Function coth = new Function("coth", 1) {
         @Override
         public double apply(double... args) {
             return Math.cosh(args[0]) / Math.sinh(args[0]);
@@ -76,35 +102,9 @@ public class AppController {
     };
 
     public void initialize() {
-        String[][] functions = {
-                {"1","1"}, {"2", "2"}, {"+", "+"}, {"-", "-"},
-                {"3", "3"}, {"4", "4"}, {"\\times", "*"}, {"\\div", "/"},
-                {"5","5"}, {"6", "6"}, {"(", "("}, {")", ")"},
-                {"7", "7"}, {"8", "8"},  {"=", "="}, {"x", "x"},
-                {"9", "9"}, {"0", "0"},{"|x|", "abs("}, {"\\Box^{a}","^"},
-                {"y", "y"},                          // y
-                {"\\sqrt{x}", "sqrt("},              // square root
-                {"\\sqrt[3]{x}", "cbrt("},           // cubic root
-                {"e^{x}", "exp("},                   // e^x (Euler's number power)
-                {"\\ln(x)", "log("},                 // natural logarithm (base e)
-                {"\\log_{10}(x)", "log10("},         // logarithm base 10
-                {"\\log_{2}(x)", "log2("},           // logarithm base 2
-                {"\\sin(x)", "sin("},                // sine
-                {"\\cos(x)", "cos("},                // cosine
-                {"\\tan(x)", "tan("},                // tangent
-                {"\\cot(x)", "cot("},                // cotangent
-                {"\\sin^{-1}(x)", "asin("},          // inverse sine
-                {"\\cos^{-1}(x)", "acos("},          // inverse cosine
-                {"\\tan^{-1}(x)", "atan("},          // inverse tangent
-                {"\\cot^{-1}(x)", "acot("},          // inverse cotangent
-                {"\\sinh(x)", "sinh("},              // hyperbolic sine
-                {"\\cosh(x)", "cosh("},              // hyperbolic cosine
-                {"\\tanh(x)", "tanh("},              // hyperbolic tangent
-                {"\\coth(x)", "coth("},              // hyperbolic cotangent
-                {"\\mathrm{sign}(x)", "signum("}     // signum function
-        };
-
         int index = 0;
+        final int rows = 10;
+        final int cols = 4;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 if (index >= functions.length) break;
@@ -228,7 +228,6 @@ public class AppController {
                         }
                     });
                 }
-
                 buttonSet.add(b, c, r);
             }
 
@@ -246,7 +245,7 @@ public class AppController {
 
             //sets the informating image inside the button
             information.setPrefSize(25,25);
-            Image image = new Image(getClass().getResourceAsStream("/dev/sadik/GraphX/information.png"));
+            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dev/sadik/GraphX/information.png")));
             ImageView img = new ImageView(image);
             img.setFitHeight(25);
             img.setPreserveRatio(true);
@@ -271,7 +270,6 @@ public class AppController {
         // set the text at the current cursor location
         equationBox.insertText(caretPosition, text);
 
-
         // update the location of cursor
         equationBox.positionCaret(caretPosition+text.length());
     }
@@ -280,6 +278,8 @@ public class AppController {
     public void generate(ActionEvent event) {
         String equation = getEquation();
         plotLine(equation);
+        if(equations.contains(equation)) return;
+        equations.add(equation);
     }
 
     //initiates the clear button action
@@ -288,8 +288,121 @@ public class AppController {
         equationBox.requestFocus();
     }
 
+    //initiates the clear graph button action
     public void clearGraph(ActionEvent event) {
         equationGraph.getData().clear();
+        equations.clear();
+    }
+
+    //initiates the showTable button action
+    public void showTable(ActionEvent event) {
+        if (equations.isEmpty()) return;
+        //creating an empty space to include table
+        AnchorPane canvas = new AnchorPane();
+        canvas.setPrefSize(450, 500);
+        Accordion ac = new Accordion();
+
+        TitledPane[] tps = new TitledPane[equations.size()];
+        for(int i = 0; i < equations.size(); i++){
+            try{
+                final String currentEquation = equations.get(i);
+                final String expressionToParse;
+                final String variableToUse;
+
+                if (currentEquation.contains("=")) {
+                    String leftHandSide = currentEquation.substring(0, currentEquation.indexOf("=")).trim().toLowerCase();
+                    String rightHandSide = currentEquation.substring(currentEquation.indexOf("=") + 1).trim().toLowerCase();
+
+                    if (leftHandSide.equals("x") || rightHandSide.equals("x")) {
+                        variableToUse = "y";
+                        expressionToParse = findExpression("x", leftHandSide, rightHandSide);
+                    } else { // Default to y=f(x)
+                        variableToUse = "x";
+                        expressionToParse = findExpression("y", leftHandSide, rightHandSide);
+                    }
+                } else {
+                    // Handle cases with no "=" (e.g., user just types "sin(x)")
+                    expressionToParse = currentEquation;
+                    variableToUse = detectVariable(currentEquation);
+                }
+                //populate the Panes and set text
+                tps[i] = new TitledPane();
+                String textToSet = "#" + (i+1) + ": " + currentEquation;
+                tps[i].setText(textToSet);
+                tps[i].setPrefSize(450, 290);
+                tps[i].setStyle("-fx-font-weight: bold");
+
+                //initialize the table
+                TableView<DataModel> table = new TableView<>();
+
+                //now the columns
+                TableColumn<DataModel, Double> x = new TableColumn<>("x");
+                x.setCellValueFactory(new PropertyValueFactory<DataModel, Double>("x"));
+                TableColumn<DataModel, Double> y = new TableColumn<>("y");
+                y.setCellValueFactory(new PropertyValueFactory<DataModel, Double>("y"));
+
+                //populate the table columns with appropriate variable
+                if(variableToUse.contains("x")) {
+                    table.getColumns().add(x);
+                    table.getColumns().add(y);
+
+                } else if(variableToUse.contains("y")) {
+                    table.getColumns().add(y);
+                    table.getColumns().add(x);
+                }
+                //adding values in table
+                //using multithreaded process
+                //to reduce load and
+                //tackle O(n^2) complexity
+                Task<ObservableList<DataModel>> task = new Task<>() {
+                    @Override
+                    protected ObservableList<DataModel> call() throws Exception {
+                        //running the process in background thread
+                        ObservableList<DataModel> data = FXCollections.observableArrayList();
+                        for(int j = 1; j <= 10; j++) {
+                            double secondValue = Math.round(parseEquation(j, expressionToParse, variableToUse) * 100000) / 100000.0;
+                            data.add(new DataModel(j, secondValue));
+                        }
+                        return data;
+                    }
+                };
+                task.setOnSucceeded(e ->{
+                    table.setItems(task.getValue());
+                });
+                task.setOnFailed(e -> {
+                    System.err.println("Error populating table for: " + currentEquation);
+                    task.getException().printStackTrace();
+                });
+
+                //starting the task on a new thread
+                Thread th = new Thread(task);
+                th.setDaemon(true);
+                th.start();
+
+                //making the table justified
+                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+                //adding the table
+                tps[i].setContent(table);
+            }catch(Exception e) { // Catch an exception just in case
+                System.err.println("Error generating UI for Table: " + e.getMessage());
+            }
+        }
+
+        //adding tps into accordion
+        ac.getPanes().addAll(tps);
+        //adding accordion to the canvas
+        canvas.getChildren().add(ac);
+        //creating the scene for table
+        Scene tableScene = new Scene(canvas);
+        Stage tableStage = new Stage();
+        tableStage.setResizable(false);
+        tableStage.setAlwaysOnTop(true);
+        //set the scene and show it on screen
+        tableStage.setScene(tableScene);
+        if(tableStage.isShowing()) {
+            tableStage.close();
+        }
+        tableStage.show();
     }
 
     //gets the equation from the text field
@@ -307,6 +420,7 @@ public class AppController {
         return e.evaluate();
     }
 
+    //parse double variable equation and get result
     private double parseEquation(double val1, double val2, String equation, String var1, String var2) {
         Expression e = new ExpressionBuilder(equation)
                 .variables(var1, var2)
@@ -318,6 +432,7 @@ public class AppController {
         return e.evaluate();
     }
 
+    //finds the dependent equation based on independent variable
     String findExpression(String variable, String exp1, String exp2) {
         return exp1.equals(variable) ? exp2 : exp1;
     }
@@ -524,7 +639,8 @@ public class AppController {
         double c = 0;
         double f_c;
 
-        for (int i = 0; i < MAX_ITERATIONS; i++) {
+        int i = 0;
+        while (i < MAX_ITERATIONS) {
             c = (a + b) / 2;
             f_c = parseEquation(c, equation, variable);
 
@@ -538,6 +654,7 @@ public class AppController {
             } else {
                 b = c;
             }
+            i++;
         }
         return c;
     }
@@ -547,7 +664,7 @@ public class AppController {
         final double SEARCH_RANGE_MAX = range;
         final double Y_SAMPLE_STEP = 0.2; // Sample the y-range to find sign changes
 
-        for(double x = -range; x <= range; x += STEP_SIZE) {
+        for(double x = SEARCH_RANGE_MIN; x <= SEARCH_RANGE_MAX; x += STEP_SIZE) {
             // Find ALL roots for this x value by sampling the entire y-range
             List<Double> roots = findAllRoots(x, SEARCH_RANGE_MIN, SEARCH_RANGE_MAX,
                     implicitEquation, Y_SAMPLE_STEP);
@@ -587,29 +704,34 @@ public class AppController {
         List<Double> roots = new ArrayList<>();
 
         // sample the range to find all sign changes
-        for(double y = y_min; y < y_max; y += sampleStep) {
-            double f1 = parseEquation(x_const, y, equation, "x", "y");
-            double f2 = parseEquation(x_const, y + sampleStep, equation, "x", "y");
+        for (double y = y_min; y < y_max; y += sampleStep) {
+            try {
+                double f1 = parseEquation(x_const, y, equation, "x", "y");
+                double f2 = parseEquation(x_const, y + sampleStep, equation, "x", "y");
 
-            // skip if either value is invalid
-            if(Double.isNaN(f1) || Double.isInfinite(f1) ||
-                    Double.isNaN(f2) || Double.isInfinite(f2)) {
-                continue;
-            }
-
-            // in case of a sign change, use bisection to find the exact root
-            if(Math.signum(f1) != Math.signum(f2)) {
-                double root = bisectionSearch(x_const, y, y + sampleStep, equation);
-                if(!Double.isNaN(root)) {
-                    roots.add(root);
+                if (Double.isNaN(f1) || Double.isInfinite(f1) ||
+                        Double.isNaN(f2) || Double.isInfinite(f2)) {
+                    continue;
                 }
-            }
-            // check if value is very close to zero
-            else if(Math.abs(f1) < TOLERANCE) {
-                roots.add(y);
+
+                if (Math.signum(f1) != Math.signum(f2)) {
+                    double root = bisectionSearch(x_const, y, y + sampleStep, equation);
+                    if (!Double.isNaN(root)) {
+                        roots.add(root);
+                    }
+                } else if (Math.abs(f1) < TOLERANCE) {
+                    roots.add(y);
+                }
+            } catch (NullPointerException |
+                     ArithmeticException |
+                     IllegalArgumentException e) {
+                // Log or skip invalid computation
+                System.err.println("Computation skipped at y=" + y + ": " + e.getMessage());
+            } catch (Exception e) {
+                // Catch any unexpected exceptions to prevent loop termination
+                System.err.println("Unexpected error at y=" + y + ": " + e);
             }
         }
-
         return roots;
     }
 

@@ -8,8 +8,7 @@ import java.awt.*;
 import java.net.URI;
 
 public class InformationController {
-    @FXML
-    Hyperlink github;
+    @FXML Hyperlink github;
 
     public void visitGithub(ActionEvent e) throws Exception{
         Desktop.getDesktop().browse(new URI("https://github.com/sadatisadik"));

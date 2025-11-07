@@ -5,6 +5,7 @@ module dev.sadik.GraphX {
     requires java.desktop;
     requires jlatexmath;
     requires javafx.swing;
+    requires java.sql;
 
 
     opens dev.sadik.GraphX to javafx.fxml;
