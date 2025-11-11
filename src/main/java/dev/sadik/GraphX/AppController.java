@@ -1,9 +1,5 @@
 package dev.sadik.GraphX;
 
-//this class is used for controlling various elements of the anchor-pane
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +26,6 @@ import java.lang.Double;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javafx.concurrent.Task;
 
 interface functionConstant{
 String[][] functions = {
@@ -296,7 +291,8 @@ public class AppController implements functionConstant {
 
     //initiates the showTable button action
     public void showTable(ActionEvent event) {
-        if (equations.isEmpty()) return;
+        if (equations.isEmpty()) return; //if there is no equation used yet simply skip
+
         //creating an empty space to include table
         AnchorPane canvas = new AnchorPane();
         canvas.setPrefSize(450, 500);
@@ -350,38 +346,15 @@ public class AppController implements functionConstant {
                     table.getColumns().add(y);
                     table.getColumns().add(x);
                 }
-                //adding values in table
-                //using multithreaded process
-                //to reduce load and
-                //tackle O(n^2) complexity
-                Task<ObservableList<DataModel>> task = new Task<>() {
-                    @Override
-                    protected ObservableList<DataModel> call() throws Exception {
-                        //running the process in background thread
-                        ObservableList<DataModel> data = FXCollections.observableArrayList();
-                        for(int j = 1; j <= 10; j++) {
-                            double secondValue = Math.round(parseEquation(j, expressionToParse, variableToUse) * 100000) / 100000.0;
-                            data.add(new DataModel(j, secondValue));
-                        }
-                        return data;
-                    }
-                };
-                task.setOnSucceeded(e ->{
-                    table.setItems(task.getValue());
-                });
-                task.setOnFailed(e -> {
-                    System.err.println("Error populating table for: " + currentEquation);
-                    task.getException().printStackTrace();
-                });
 
-                //starting the task on a new thread
-                Thread th = new Thread(task);
-                th.setDaemon(true);
-                th.start();
+                for(int j = 1; j<=10; j++) {
+                    table.getItems().add(new DataModel(j, parseEquation(j, expressionToParse, variableToUse)));
+                }
 
                 //making the table justified
                 table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-                //adding the table
+
+                //adding the table to the accordion
                 tps[i].setContent(table);
             }catch(Exception e) { // Catch an exception just in case
                 System.err.println("Error generating UI for Table: " + e.getMessage());
@@ -390,13 +363,19 @@ public class AppController implements functionConstant {
 
         //adding tps into accordion
         ac.getPanes().addAll(tps);
+
+        //setting the first titled pane to be expanded
+        ac.setExpandedPane(tps[0]);
+
         //adding accordion to the canvas
         canvas.getChildren().add(ac);
+
         //creating the scene for table
         Scene tableScene = new Scene(canvas);
         Stage tableStage = new Stage();
         tableStage.setResizable(false);
         tableStage.setAlwaysOnTop(true);
+
         //set the scene and show it on screen
         tableStage.setScene(tableScene);
         if(tableStage.isShowing()) {
