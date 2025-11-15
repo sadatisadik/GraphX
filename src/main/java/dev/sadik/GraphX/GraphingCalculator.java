@@ -13,12 +13,14 @@ import javafx.scene.image.Image;
 import java.util.Objects;
 
 public class GraphingCalculator extends Application {
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/dev/sadik/GraphX/App.fxml"));
 
         Parent root = loader.load();
+
+        AppController appController = loader.getController();
+        GraphController graphController = new GraphController(appController);
 
         Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dev/sadik/GraphX/icon.png")));
 
