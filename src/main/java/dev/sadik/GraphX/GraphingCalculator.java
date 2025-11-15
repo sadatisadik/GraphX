@@ -19,9 +19,6 @@ public class GraphingCalculator extends Application {
 
         Parent root = loader.load();
 
-        AppController appController = loader.getController();
-        GraphController graphController = new GraphController(appController);
-
         Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/dev/sadik/GraphX/icon.png")));
 
         Scene scene = new Scene(root);

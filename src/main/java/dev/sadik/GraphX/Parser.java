@@ -1,6 +1,5 @@
 package dev.sadik.GraphX;
 
-import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
 import java.util.ArrayList;
@@ -25,29 +24,54 @@ public class Parser {
     };
 
     //pareses the equation and gets the result of the equation
-    protected double parseEquation(double currentValue, String equation, String variable) {
-        Expression e = new ExpressionBuilder(equation)
-                .variables(variable)
-                .functions(acot, coth)
-                .build()
-                .setVariable(variable, currentValue);
-        return e.evaluate();
+    protected double parseEquation(double currentValue, String equation, String variable) throws Exception {
+        try {
+            if(equation.contains("tan(pi/2)") || equation.contains("cot(pi)")) {
+                throw new Exception("Undefined for Real Numbers");
+            }
+
+            double result = new ExpressionBuilder(equation)
+                    .variables(variable)
+                    .functions(acot, coth)
+                    .build()
+                    .setVariable(variable, currentValue)
+                    .evaluate();
+
+            if (Double.isNaN(result) || Double.isInfinite(result)) {
+                throw new Exception("Undefined for Real Numbers");
+            }
+
+            return result;
+        } catch (Exception ex) {
+            String em = "\nError message: "+ ex.getMessage();
+            setError(em);
+            throw new RuntimeException(ex);
+        }
     }
 
     //parse double variable equation and get result
-    protected double parseEquation(double val1, double val2, String equation, String var1, String var2) {
-        Expression e = new ExpressionBuilder(equation)
-                .variables(var1, var2)
-                .functions(acot, coth)
-                .build()
-                .setVariable(var1, val1)
-                .setVariable(var2,val2);
-
-        return e.evaluate();
+    protected double parseEquation(double val1, double val2, String equation, String var1, String var2) throws Exception {
+        try {
+            double result = new ExpressionBuilder(equation)
+                    .variables(var1, var2)
+                    .functions(acot, coth)
+                    .build()
+                    .setVariable(var1, val1)
+                    .setVariable(var2,val2)
+                    .evaluate();
+            if (Double.isNaN(result) || Double.isInfinite(result)) {
+                throw new Exception("Undefined for Real Numbers");
+            }
+            return result;
+        } catch (Exception ex) {
+            String em = "\nError message: "+ ex.getMessage();
+            setError(em);
+            throw new RuntimeException(ex);
+        }
     }
 
     // bisection search for single-variable equations
-    protected double bisectionSearchSingleVar(double min, double max, String equation, String variable) {
+    protected double bisectionSearchSingleVar(double min, double max, String equation, String variable) throws Exception {
         double f_min = parseEquation(min, equation, variable);
         double f_max = parseEquation(max, equation, variable);
 
@@ -93,7 +117,7 @@ public class Parser {
      * @return The y root, or Double.NaN if no root is found in the range.
      */
 
-    protected double bisectionSearch(double x_const, double y_min, double y_max, String equation) {
+    protected double bisectionSearch(double x_const, double y_min, double y_max, String equation) throws Exception {
         double f_min = parseEquation(x_const, y_min, equation, "x", "y");
         double f_max = parseEquation(x_const, y_max, equation, "x", "y");
 

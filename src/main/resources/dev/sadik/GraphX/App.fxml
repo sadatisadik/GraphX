@@ -50,11 +50,10 @@
          <font>
             <Font size="17.0" />
          </font></TextField>
-      <GridPane hgap="10.0" layoutX="51.0" layoutY="97.0" prefHeight="38.0" prefWidth="442.0" vgap="10.0">
+      <GridPane hgap="10.0" layoutX="51.0" layoutY="97.0" prefHeight="38.0" prefWidth="348.0" vgap="10.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
@@ -63,10 +62,9 @@
         </rowConstraints>
          <children>
             <Button fx:id="generateButton" mnemonicParsing="false" onAction="#generate" prefHeight="14.0" prefWidth="80.0" text="Generate" />
-            <Button fx:id="clearText" mnemonicParsing="false" onAction="#clearText" prefHeight="0.0" prefWidth="80.0" text="Clear Text" GridPane.columnIndex="1" />
+            <Button fx:id="clearText" mnemonicParsing="false" onAction="#clearText" prefHeight="0.0" prefWidth="80.0" text="Clear Text" GridPane.columnIndex="3" />
             <Button fx:id="clearGraph" mnemonicParsing="false" onAction="#clearGraph" prefHeight="0.0" prefWidth="80.0" text="Clear Graph" GridPane.columnIndex="2" />
-            <Button fx:id="backspace" mnemonicParsing="false" prefHeight="0.0" prefWidth="81.0" text="Backspace" GridPane.columnIndex="3" />
-            <Button fx:id="showTable" mnemonicParsing="false" onAction="#showTable" prefHeight="6.0" prefWidth="81.0" text="Show Table" GridPane.columnIndex="4" />
+            <Button fx:id="showTable" mnemonicParsing="false" onAction="#showTable" prefHeight="6.0" prefWidth="81.0" text="Show Table" GridPane.columnIndex="1" />
          </children>
       </GridPane>
       <Label layoutX="1151.0" layoutY="664.0" text="©Sadati Sadik Pranto , 2025" textFill="WHITE">
