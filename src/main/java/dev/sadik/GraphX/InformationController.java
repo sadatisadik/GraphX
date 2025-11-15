@@ -3,7 +3,6 @@ package dev.sadik.GraphX;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
-
 import java.awt.*;
 import java.net.URI;
 

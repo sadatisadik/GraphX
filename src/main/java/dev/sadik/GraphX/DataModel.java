@@ -1,5 +1,6 @@
 package dev.sadik.GraphX;
 
+//this class is used to represent data style that'll be used in the table
 public class DataModel {
     private double x;
     private double y;
