@@ -1,6 +1,7 @@
 package dev.sadik.GraphX;
 
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -330,15 +331,48 @@ public class AppController extends GraphController implements functionConstant {
                     table.getColumns().add(x);
                 }
 
-                for(int j = 1; j<=10; j++) {
-                    table.getItems().add(new DataModel(j, parseEquation(j, expressionToParse, variableToUse)));
-                }
+                Task<List<DataModel>> task = new Task<>() {
+                    @Override
+                    protected List<DataModel> call() throws Exception {
+                        List<DataModel> rows = new ArrayList<>();
+                        for(int j = 1; j<=10; j++) {
+                            if(isCancelled()) break;
+                            double value = parseEquation(j, expressionToParse, variableToUse);
+                            rows.add(new DataModel(j, value));
+                        }
+                        return rows;
+                    }
+                };
+
+                task.setOnSucceeded(e -> {
+                    List<DataModel> result = task.getValue();
+                    table.getItems().addAll(result);
+                });
+
+                task.setOnFailed(e -> {
+                    Throwable t = task.getException();
+                    try {
+                        setError(t.getMessage());
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    throw new RuntimeException(t);
+                });
+
+                Thread th = new Thread(task, "TableGeneration");
+                th.setDaemon(true);
+                th.start();
+
+//                for(int j = 1; j<=10; j++) {
+//                    table.getItems().add(new DataModel(j, parseEquation(j, expressionToParse, variableToUse)));
+//                }
 
                 //making the table justified
                 table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
                 //adding the table to the accordion
                 tps[i].setContent(table);
+                task.cancel();
             }catch(Exception e) { // Catch an exception just in case
                 System.err.println("Error generating UI for Table: " + e.getMessage());
             }
@@ -606,7 +640,8 @@ public class AppController extends GraphController implements functionConstant {
         errorWindow.setResizable(false);
         errorWindow.setAlwaysOnTop(true);
         errorWindow.setScene(errorScreen);
-        Image icon = new Image(getClass().getResourceAsStream("/dev/sadik/GraphX/error.png"));
+        Image icon = new Image(Objects.requireNonNull(getClass().
+                getResourceAsStream("/dev/sadik/GraphX/error.png")));
         errorWindow.getIcons().add(icon);
         errorWindow.show();
     }
