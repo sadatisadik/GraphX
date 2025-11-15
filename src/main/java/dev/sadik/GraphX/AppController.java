@@ -373,6 +373,7 @@ public class AppController extends GraphController implements functionConstant {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         Stage infoScreen = new Stage();
+        infoScreen.setResizable(false);
         infoScreen.initModality(Modality.APPLICATION_MODAL);
         infoScreen.setTitle("About Developer");
         Image icon = new Image(getClass().getResourceAsStream("/dev/sadik/GraphX/information.png"));
