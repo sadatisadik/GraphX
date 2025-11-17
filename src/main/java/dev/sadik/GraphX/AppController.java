@@ -233,9 +233,6 @@ public class AppController extends GraphController implements functionConstant {
             img.setFitHeight(25);
             img.setPreserveRatio(true);
             information.setGraphic(img);
-
-            showTable.setDisable(true);
-            clearGraph.setDisable(true);
         }
     }
 
@@ -269,8 +266,6 @@ public class AppController extends GraphController implements functionConstant {
     public void clearGraph(ActionEvent event) {
         equationGraph.getData().clear();
         equations.clear();
-        clearGraph.setDisable(true);
-        showTable.setDisable(true);
     }
 
     //initiates the showTable button action
@@ -372,7 +367,6 @@ public class AppController extends GraphController implements functionConstant {
 
                 //adding the table to the accordion
                 tps[i].setContent(table);
-                task.cancel();
             }catch(Exception e) { // Catch an exception just in case
                 System.err.println("Error generating UI for Table: " + e.getMessage());
             }
@@ -531,8 +525,6 @@ public class AppController extends GraphController implements functionConstant {
                 }
             }
         }
-        showTable.setDisable(false);
-        clearGraph.setDisable(false);
     }
 
     //plots equations where the same variable appears on both sides
