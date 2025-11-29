@@ -9,7 +9,6 @@ A modern, feature-rich graphing calculator built with JavaFX that enables users 
 ✨ **Interactive Graph Visualization**
 - Real-time rendering of mathematical functions
 - Support for single and multi-variable equations
-- Smooth zooming and panning capabilities
 
 📐 **Advanced Mathematical Operations**
 - Comprehensive trigonometric functions (sin, cos, tan, cot, and inverse variants)
