@@ -386,6 +386,7 @@ public class AppController extends GraphController implements functionConstant {
         Stage tableStage = new Stage();
         tableStage.setResizable(false);
         tableStage.setAlwaysOnTop(true);
+        tableStage.setTitle("Data Table");
 
         //set the scene and show it on screen
         tableStage.setScene(tableScene);

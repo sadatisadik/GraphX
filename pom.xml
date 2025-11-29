@@ -64,14 +64,6 @@
 
   <build>
     <plugins>
-        <plugin>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-maven-plugin</artifactId>
-            <version>0.0.8</version>
-            <configuration>
-                <mainClass>hellofx/org.openjfx.App</mainClass>
-            </configuration>
-        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -101,6 +93,54 @@
           </execution>
         </executions>
       </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.0</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>dev.sadik.GraphX.App</mainClass>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>com.akathist.maven.plugins.launch4j</groupId>
+            <artifactId>launch4j-maven-plugin</artifactId>
+            <version>2.5.0</version> <!-- Use a recent version -->
+            <executions>
+                <execution>
+                    <id>l4j-gui</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>launch4j</goal>
+                    </goals>
+                    <configuration>
+                        <headerType>gui</headerType> <!-- or console for console applications -->
+                        <jar>target/GraphX-1.0.jar</jar> <!-- Adjust JAR name -->
+                        <icon>src/main/resources/dev/sadik/GraphX/icon.ico</icon>
+                        <outfile>target/GraphX.exe</outfile>
+                        <errTitle>GraphX Error</errTitle>
+                        <dontWrapJar>false</dontWrapJar>
+                        <jre>
+                            <minVersion>25.0</minVersion> <!-- Specify minimum JRE version -->
+                            <path>jdk</path>
+                        </jre>
+                        <!-- Other Launch4j configurations as needed -->
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
 </project>
