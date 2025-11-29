@@ -230,8 +230,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, feature requests, or questions:
 - Open an issue on GitHub
-- Contact: [Your Email Here]
-- Website: [Your Website Here]
+- Contact: [Sadati Sadik](mailto:sadatisadik.pranto@gmail.com)
+- LinkedIn: [Sadati Sadik](https://www.linkedin.com/in/sadatisadik/)
 
 ## Changelog
 
