@@ -172,7 +172,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, feature requests, or questions:
 - Open an issue on GitHub
-- Contact: [Click Here](sadatisadik.pranto@gmail.com)
+- Contact: sadatisadik.pranto@gmail.com
 
 ## Changelog
 
