@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+ 
+# Ignore build output created by project tooling
+output/

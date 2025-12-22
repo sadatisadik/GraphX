@@ -1,0 +1,8 @@
+jpackage --type app-image `
+         --dest output `
+         --name GraphX `
+         --input "D:\03 Education and Learning\Programming and Projects\Java\Projects\GraphX" `
+         --main-jar target/GraphX-1.0.jar `
+         --main-class dev.sadik.GraphX.App
+
+

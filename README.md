@@ -30,82 +30,23 @@ A modern, feature-rich graphing calculator built with JavaFX that enables users 
 
 ## System Requirements
 
-### For Installer Version (`GraphX-installer.exe`)
+### GraphX v2.0
 - **OS**: Windows 10 or newer (64-bit)
-- **Disk Space**: ~800MB (includes JDK 25)
+- **Disk Space**: ~800MB (includes bundled runtime/JDK)
 - **Memory**: Minimum 512MB RAM (1GB recommended)
-- **Internet**: Optional (not required after download)
+- **Internet**: Not required after download
 
-### For Portable Non-Installer Version (`GraphX-Non-Installer.exe`)
-- **Java**: JDK 24 or higher (must be pre-installed)
-- **OS**: Windows, macOS, or Linux
-- **Memory**: Minimum 256MB RAM (512MB+ recommended)
-- **Disk Space**: ~50MB (portable executable only)
-- **Notes**: Java must be properly installed and in system PATH
+The distributed `GraphX.zip` includes the required runtime — no separate JDK installation is necessary for the Windows distribution.
 
 ## Installation
 
-### Option 1: Installer with Bundled JDK (Recommended for Most Users)
+### GraphX v2.0 (Recommended)
 
-**File**: `GraphX-installer.exe`
+1. Download the `GraphX.zip` file.
+2. Extract the zip to a folder of your choice.
+3. Run `GraphX.exe` to launch the calculator.
 
-✅ **Advantages**:
-- Includes Java Development Kit (JDK 25) automatically
-- No prerequisite installation required
-- One-click installation process
-- System-wide integration with Start Menu shortcuts
-- Automatic dependency management
-
-**Steps**:
-1. Download `GraphX-installer.exe`
-2. Double-click to run the installer
-3. Follow the on-screen instructions
-4. Application launches automatically upon completion
-
-### Option 2: Portable Non-Installer Executable (Advanced Users)
-
-**File**: `GraphX-Non-Installer.exe`
-
-⚠️ **Requirements**:
-- Java Development Kit (JDK) 24 or newer must be pre-installed
-- No installation required; run directly from any location
-- Portable - can be stored on USB drives
-
-**Steps**:
-1. Download and install [Java JDK 25](https://www.oracle.com/java/technologies/javase/jdk25-archive-downloads.html) or [Adoptium](https://adoptium.net/)
-2. Download `GraphX-Non-Installer.exe`
-3. Run the executable directly - no installation wizard
-4. Application launches immediately
-
-**Ideal for**:
-- Users with Java already installed
-- Portable installation on USB/external drives
-- Advanced developers and power users
-- Environments where software installation is restricted
-
-### From Source (Developers)
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/sadikpranto/GraphX.git
-   cd GraphX
-   ```
-
-2. **Build the Project** (requires JDK 24+ and Maven)
-   ```bash
-   mvn clean package
-   ```
-
-3. **Run the Application**
-   ```bash
-   mvn javafx:run
-   ```
-
-### Manual JAR Execution (Advanced)
-   ```bash
-   java -jar target/GraphX-1.0.jar
-   ```
-   Requires Java 24+ installed on your system.
+The runtime (JDK) is included in the zip file — no additional JDK installation is required.
 
 ## Usage
 
@@ -231,20 +172,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, feature requests, or questions:
 - Open an issue on GitHub
-- Contact: [Your Email Here]
-- Website: [Your Website Here]
+- Contact: [Click Here](sadatisadik.pranto@gmail.com)
 
 ## Changelog
 
-### v1.0 (Current)
-- Initial release
-- Basic graphing functionality
-- Single and multi-variable equation support
-- Root finding capabilities
-- Modern JavaFX UI
+### v2.0 (Current)
+- Bundled runtime included (no separate JDK required)
+- Simplified installation via `GraphX.zip`
+- Updated system requirements and installer
+- Improved graph rendering and stability fixes
+- Miscellaneous bug fixes and enhancements
 
 ---
 
 **Made with ❤️ by Sadati Sadik Pranto**
 
-*Last Updated: November 2025*
+*Last Updated: December 2025*

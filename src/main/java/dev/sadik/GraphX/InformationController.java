@@ -10,6 +10,6 @@ public class InformationController {
     @FXML Hyperlink github;
 
     public void visitGithub(ActionEvent e) throws Exception{
-        Desktop.getDesktop().browse(new URI("https://github.com/sadatisadik"));
+        Desktop.getDesktop().browse(new URI("https://github.com/ssspranto"));
     }
 }
