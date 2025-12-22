@@ -32,7 +32,7 @@ A modern, feature-rich graphing calculator built with JavaFX that enables users 
 
 ### GraphX v2.0
 - **OS**: Windows 10 or newer (64-bit)
-- **Disk Space**: ~800MB (includes bundled runtime/JDK)
+- **Disk Space**: ~160MB (includes bundled runtime/JDK)
 - **Memory**: Minimum 512MB RAM (1GB recommended)
 - **Internet**: Not required after download
 
